@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import axios from "axios"
 
-const getRandom = async () => {
+const getPlayers = async () => {
   let response
   try {
     response = await axios.get(
@@ -14,6 +14,6 @@ const getRandom = async () => {
 }
 
 export default async function handler(req: any, res: any) {
-  const { data } = await getRandom()
+  const { data } = await getPlayers()
   res.status(200).json(data)
 }
