@@ -11,6 +11,8 @@ pragma solidity ^0.8.11;
 */
 /// @notice
 contract RabbitHole {
+    error NotPlayGame();
+
     struct Player {
         address player;
         uint256 fuel;
@@ -28,9 +30,9 @@ contract RabbitHole {
 
     /// @notice There are two bots
     constructor() {
-        Player memory bot = Player(address(this), 50, 500, true);
+        Player memory bot = Player(address(this), 50, 5, true);
         players.push(bot);
-        bot = Player(address(this), 50, 600, true);
+        bot = Player(address(this), 50, 6, true);
         players.push(bot);
     }
 
@@ -46,10 +48,18 @@ contract RabbitHole {
         players[playersExists[msg.sender]].speed = speed;
     }
 
+    function playGame(address player) public {
+        uint256 playerIndex = playersExists[player];
+        if (players[playerIndex].player != msg.sender) 
+            revert("msg.sender can not play.");
+        
+        players[playerIndex].fuel = players[playerIndex].fuel - players[playerIndex].speed;
+    }
+
     function setPlayerFuel(uint256 fuel) public onlyPlayer(msg.sender) {
-        players[playersExists[msg.sender] - 1].fuel = fuel;
+        players[playersExists[msg.sender]].fuel = fuel;
         //rule 1
-        if (fuel == 0) players[playersExists[msg.sender] - 1].alive = false;
+        if (fuel == 0) players[playersExists[msg.sender]].alive = false;
 
         //rule 2  Iterate through players to find the player with the minimum speed
         uint256 minPlayerSpeed = players[0].speed;
@@ -58,8 +68,8 @@ contract RabbitHole {
                 minPlayerSpeed = players[i].speed;
             }
         }
-        if (players[playersExists[msg.sender] - 1].speed <= minPlayerSpeed) {
-            players[playersExists[msg.sender] - 1].alive = false;
+        if (players[playersExists[msg.sender]].speed <= minPlayerSpeed) {
+            players[playersExists[msg.sender]].alive = false;
         }
     }
 
