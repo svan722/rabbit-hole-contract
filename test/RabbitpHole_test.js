@@ -26,7 +26,6 @@ contract("RabbitHole Contract", async (deployers) => {
     assert(players.length === 3, "there is not players with random speed");
   });
 
- 
   it("should set player speed", async () => {
     await rabbitHole.setPlayerSpeed(9, { from: player });
     const players = await rabbitHole.getPlayers();
@@ -44,4 +43,5 @@ contract("RabbitHole Contract", async (deployers) => {
     const players = await rabbitHole.getPlayers();
     assert(players.length === 2, "player fuel no set");
   });
+
 });
