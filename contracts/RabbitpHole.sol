@@ -26,6 +26,7 @@ contract RabbitHole {
     }
 
     Player[] private players;
+
     mapping(address => uint256) public playersExists;
 
     /// @notice There are two bots
@@ -36,24 +37,37 @@ contract RabbitHole {
         players.push(bot);
     }
 
-    function addPlayer() public onlyNilPlayer(msg.sender) {
-        address newPlayerAddress = msg.sender;
-        Player memory newPlayer = Player(newPlayerAddress, 50, 0, true);
-        players.push(newPlayer);
-        playersExists[newPlayerAddress] = players.length - 1;
-    }
-
     /// @notice players can set speed
     function setPlayerSpeed(uint256 speed) public onlyPlayer(msg.sender) {
         players[playersExists[msg.sender]].speed = speed;
     }
 
     function playGame(address player) public {
-        uint256 playerIndex = playersExists[player];
-        if (players[playerIndex].player != msg.sender) 
+        if (player != msg.sender) 
             revert("msg.sender can not play.");
         
+        if (playersExists[msg.sender] == 0) {
+            address newPlayerAddress = msg.sender;
+            Player memory newPlayer = Player(newPlayerAddress, 50, random(), true);
+            players.push(newPlayer);
+            playersExists[newPlayerAddress] = players.length - 1;
+        }
+
+        uint256 playerIndex = playersExists[player];
         players[playerIndex].fuel = players[playerIndex].fuel - players[playerIndex].speed;
+        players[0].fuel = players[0].fuel - players[0].speed;
+        players[1].fuel = players[1].fuel - players[1].speed;
+    }
+
+    function initPlayers() public {
+        delete players;
+
+        Player memory bot = Player(address(this), 50, 5, true);
+        players.push(bot);
+        bot = Player(address(this), 50, 6, true);
+        players.push(bot);
+
+        playersExists[msg.sender] = 0;
     }
 
     function setPlayerFuel(uint256 fuel) public onlyPlayer(msg.sender) {
@@ -82,11 +96,13 @@ contract RabbitHole {
     }
 
     function random() internal view returns (uint) {
-        uint seed = uint(
-            keccak256(abi.encodePacked(blockhash(block.number - 1)))
-        ) % 300;
-        uint adjusted = seed + 500;
-        return adjusted;
+        uint seed = uint(keccak256(abi.encodePacked(
+            block.timestamp,
+            block.prevrandao,
+            blockhash(block.number - 1)
+        )));
+        uint speed = (seed % 10) + 1;
+        return speed;
     }
 
     modifier onlyPlayer(address _player) {
