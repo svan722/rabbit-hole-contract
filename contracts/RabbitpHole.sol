@@ -43,6 +43,7 @@ contract RabbitHole {
     }
 
     function playGame(address player) public {
+        if (players.length == 3) revert("game is started");
         if (player != msg.sender) 
             revert("msg.sender can not play.");
         
@@ -98,7 +99,7 @@ contract RabbitHole {
     function random() internal view returns (uint) {
         uint seed = uint(keccak256(abi.encodePacked(
             block.timestamp,
-            block.prevrandao,
+            block.difficulty, //prevrandao,
             blockhash(block.number - 1)
         )));
         uint speed = (seed % 10) + 1;
@@ -110,16 +111,6 @@ contract RabbitHole {
             playersExists[_player] < players.length &&
             playersExists[_player] > 0,
             "msg.sender is not player."
-        );
-
-        _;
-    }
-
-    modifier onlyNilPlayer(address _player) {
-        require (
-            playersExists[_player] > players.length - 1 ||
-            playersExists[_player] == 0,
-            "msg.sender is player"
         );
 
         _;
