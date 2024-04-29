@@ -99,7 +99,7 @@ contract RabbitHole {
     function random() internal view returns (uint) {
         uint seed = uint(keccak256(abi.encodePacked(
             block.timestamp,
-            block.prevrandao,
+            block.difficulty, //prevrandao,
             blockhash(block.number - 1)
         )));
         uint speed = (seed % 10) + 1;
