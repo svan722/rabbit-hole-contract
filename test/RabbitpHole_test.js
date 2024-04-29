@@ -20,5 +20,13 @@ contract("RabbitHole Contract", async (deployers) => {
     assert(bot2.fuel === "50", "bot 2 fuel is not 50");
   });
 
+  it("should play game with the playe have random speed", async () => {
+    await rabbitHole.playGame(player, { from: player });
+    const players = await rabbitHole.getPlayers();
+    assert(players.length === 3, "there is not players with random speed");
+  });
+
+ 
+  
 
 });
