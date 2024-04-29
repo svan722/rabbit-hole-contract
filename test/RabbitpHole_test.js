@@ -33,5 +33,11 @@ contract("RabbitHole Contract", async (deployers) => {
     assert(players[2].speed === "9", "player speed no set");
   });
 
+  it("should set player fuel status", async () => {
+    await rabbitHole.setPlayerFuel(40, { from: player });
+    const players = await rabbitHole.getPlayers();
+    assert(players[2].fuel === "40", "player fuel no set");
+  });
+
 
 });
