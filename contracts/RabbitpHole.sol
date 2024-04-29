@@ -115,14 +115,4 @@ contract RabbitHole {
 
         _;
     }
-
-    modifier onlyNilPlayer(address _player) {
-        require (
-            playersExists[_player] > players.length - 1 ||
-            playersExists[_player] == 0,
-            "msg.sender is player"
-        );
-
-        _;
-    }
 }
