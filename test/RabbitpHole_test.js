@@ -39,5 +39,9 @@ contract("RabbitHole Contract", async (deployers) => {
     assert(players[2].fuel === "40", "player fuel no set");
   });
 
-
+  it("The player has been reset", async () => {
+    await rabbitHole.initPlayers({ from: player });
+    const players = await rabbitHole.getPlayers();
+    assert(players.length === 2, "player fuel no set");
+  });
 });
