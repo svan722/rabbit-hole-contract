@@ -44,4 +44,5 @@ contract("RabbitHole Contract", async (deployers) => {
     assert(players.length === 2, "player fuel no set");
   });
 
+  
 });
