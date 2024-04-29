@@ -27,6 +27,11 @@ contract("RabbitHole Contract", async (deployers) => {
   });
 
  
-  
+  it("should set player speed", async () => {
+    await rabbitHole.setPlayerSpeed(9, { from: player });
+    const players = await rabbitHole.getPlayers();
+    assert(players[2].speed === "9", "player speed no set");
+  });
+
 
 });
