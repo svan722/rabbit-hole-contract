@@ -43,7 +43,7 @@ contract RabbitHole {
     }
 
     function playGame(address player) public {
-        if (players.length == 3) revert("game is started");
+        if (players.length == 4) revert("game is started");
         if (player != msg.sender) 
             revert("msg.sender can not play.");
         
