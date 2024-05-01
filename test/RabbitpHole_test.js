@@ -21,9 +21,11 @@ contract("RabbitHole Contract", async (deployers) => {
   });
 
   it("should play game with the playe have parm speed", async () => {
-    await rabbitHole.playGame(player, { from: player });
+    await rabbitHole.playGame(8, player, { from: player });
+    await rabbitHole.playGame(9, player, { from: player });
+
     const players = await rabbitHole.getPlayers();
-    assert(players.length === 3, "there is not players with random speed");
+    assert(players[2].speed === 9, "there is not players with parm speed");
   });
 
   it("The player has been reset", async () => {

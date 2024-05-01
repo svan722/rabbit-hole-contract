@@ -22,7 +22,7 @@ contract RabbitHole {
 
     struct GameData {
         Player[] players;
-        uint speed;
+        uint256 speed;
     }
 
     Player[] private players;
@@ -51,6 +51,7 @@ contract RabbitHole {
             players[playerIndex].fuel =
                 players[playerIndex].fuel -
                 players[playerIndex].speed;
+            players[playerIndex].speed = speed;
             players[0].fuel = players[0].fuel - players[0].speed;
             players[1].fuel = players[1].fuel - players[1].speed;
         }
