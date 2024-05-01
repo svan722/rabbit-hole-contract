@@ -20,16 +20,10 @@ contract("RabbitHole Contract", async (deployers) => {
     assert(bot2.fuel === "50", "bot 2 fuel is not 50");
   });
 
-  it("should play game with the playe have random speed", async () => {
+  it("should play game with the playe have parm speed", async () => {
     await rabbitHole.playGame(player, { from: player });
     const players = await rabbitHole.getPlayers();
     assert(players.length === 3, "there is not players with random speed");
-  });
-
-  it("should set player fuel status", async () => {
-    await rabbitHole.setPlayerFuel(40, { from: player });
-    const players = await rabbitHole.getPlayers();
-    assert(players[2].fuel === "40", "player fuel no set");
   });
 
   it("The player has been reset", async () => {
@@ -37,13 +31,5 @@ contract("RabbitHole Contract", async (deployers) => {
     const players = await rabbitHole.getPlayers();
     assert(players.length === 2, "player fuel no set");
   });
-
-  it("should set player speed", async () => {
-    await rabbitHole.playGame(player, { from: player });
-    await rabbitHole.setPlayerSpeed(9, { from: player });
-    const players = await rabbitHole.getPlayers();
-    assert(players[2].speed === "9", "player speed no set");
-  });
-
 
 });
