@@ -39,25 +39,33 @@ contract RabbitHole {
 
     /// @notice players can set speed
     function setPlayerSpeed(uint256 speed) public onlyPlayer(msg.sender) {
-        players[playersExists[msg.sender]].speed = speed;
+        require(speed < 10, "Speed must be at least 10"); // Add a requirement for minimum speed
+
+        Player storage player = players[playersExists[msg.sender]];
+
+        require(player.alive, "Player is not alive");
+        require(speed <= player.fuel, "Insufficient fuel");
+
+        player.speed = speed;
     }
 
-    function playGame(address player) public {
-        if (players.length == 4) revert("game is started");
-        if (player != msg.sender) 
-            revert("msg.sender can not play.");
-        
+    function playGame(uint256 speed, address player) public {
+        if (player != msg.sender) revert("msg.sender can not play.");
+        require(speed < 10, "Speed must be at least 10");
+
         if (playersExists[msg.sender] == 0) {
             address newPlayerAddress = msg.sender;
-            Player memory newPlayer = Player(newPlayerAddress, 50, random(), true);
+            Player memory newPlayer = Player(newPlayerAddress, 50, speed, true);
             players.push(newPlayer);
             playersExists[newPlayerAddress] = players.length - 1;
+        } else {
+            uint256 playerIndex = playersExists[player];
+            players[playerIndex].fuel =
+                players[playerIndex].fuel -
+                players[playerIndex].speed;
+            players[0].fuel = players[0].fuel - players[0].speed;
+            players[1].fuel = players[1].fuel - players[1].speed;
         }
-
-        uint256 playerIndex = playersExists[player];
-        players[playerIndex].fuel = players[playerIndex].fuel - players[playerIndex].speed;
-        players[0].fuel = players[0].fuel - players[0].speed;
-        players[1].fuel = players[1].fuel - players[1].speed;
     }
 
     function initPlayers() public {
@@ -96,20 +104,10 @@ contract RabbitHole {
         players[playersExists[msg.sender] - 1].alive = alive;
     }
 
-    function random() internal view returns (uint) {
-        uint seed = uint(keccak256(abi.encodePacked(
-            block.timestamp,
-            block.difficulty, //prevrandao,
-            blockhash(block.number - 1)
-        )));
-        uint speed = (seed % 10) + 1;
-        return speed;
-    }
-
     modifier onlyPlayer(address _player) {
-        require (
+        require(
             playersExists[_player] < players.length &&
-            playersExists[_player] > 0,
+                playersExists[_player] > 0,
             "msg.sender is not player."
         );
 
