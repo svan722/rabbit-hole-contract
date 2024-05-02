@@ -1,3 +1,7 @@
+/**
+ *Submitted for verification at Etherscan.io on 2024-05-02
+*/
+
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
@@ -18,7 +22,7 @@ contract RabbitHole {
         bool alive;
     }
 
-    Player[] private players;
+    Player[] public players;
 
     mapping(address => uint256) public playersExists;
 
@@ -48,26 +52,18 @@ contract RabbitHole {
     }
 
     function initPlayers() public {
+        for (uint256 i = 2; i < players.length; i++) {
+            playersExists[players[i].player] = 0;
+        }
+
         delete players;
         Player memory bot = Player(address(this), 50, 5, true);
         players.push(bot);
         bot = Player(address(this), 50, 6, true);
         players.push(bot);
-
-        playersExists[msg.sender] = 0;
     }
 
     function getPlayers() public view returns (Player[] memory) {
         return players;
-    }
-
-    modifier onlyPlayer(address _player) {
-        require(
-            playersExists[_player] < players.length &&
-                playersExists[_player] > 0,
-            "msg.sender is not player."
-        );
-
-        _;
     }
 }
